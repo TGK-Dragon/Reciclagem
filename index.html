@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Reciclagem</title>
+    <link rel="stylesheet" href="Styles.css">
+</head>
+<body>
+    <div id="pontuacao">Acertos: <span id="score">0</span></div>
+    <div id="erros">Erros: <span id="errorCount">0</span></div>
+    <div class="container">
+        <h1>Jogo da Reciclagem</h1>
+        <img id="imagemLixo" src="" alt="Objeto para reciclagem" onerror="this.onerror=null; this.src='imagem_padrao.jpg'">
+        <div>
+            <button class="btn" onclick="verificarResposta('PLASTICO')">Plastico</button>
+            <button class="btn" onclick="verificarResposta('PAPEL')">Papel</button>
+            <button class="btn" onclick="verificarResposta('VIDRO')">Vidro</button>
+            <button class="btn" onclick="verificarResposta('METAL')">Metal</button>
+            <button class="btn" onclick="verificarResposta('ORGANICO')">Organico</button>
+            <button class="btn" onclick="verificarResposta('NAO_RECICLAVEL')">Nao Reciclavel</button>
+        </div>
+        <p id="mensagem"></p>
+        <button id="reset" onclick="resetarPontuacao()">Resetar Pontuação</button>
+    </div>
+    <script>
+        function removerAcentos(str) {
+            return str.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ /g, "_").toLowerCase();
+        }
+
+        const objetos = [];
+        const categorias = ["Plastico", "Papel", "Vidro", "Metal", "Organico", "Nao Reciclavel"];
+        let pontuacao = 0;
+        let erros = 0;
+
+        categorias.forEach(categoria => {
+            for (let i = 1; i <= 10; i++) {
+                const nomeArquivo = `${removerAcentos(categoria)}${i}.jpg`;
+                objetos.push({ imagem: nomeArquivo, categoria: categoria.toUpperCase().replace(" ", "_") });
+            }
+        });
+
+        let objetoAtual;
+
+        function carregarNovoObjeto() {
+            objetoAtual = objetos[Math.floor(Math.random() * objetos.length)];
+            document.getElementById("imagemLixo").src = objetoAtual.imagem;
+            document.getElementById("mensagem").innerText = "";
+        }
+
+        function verificarResposta(categoriaEscolhida) {
+            if (categoriaEscolhida.toUpperCase() === objetoAtual.categoria) {
+                document.getElementById("mensagem").innerText = "✅ Resposta correta!";
+                pontuacao++;
+                document.getElementById("score").innerText = pontuacao;
+            } else {
+                document.getElementById("mensagem").innerText = `❌ Resposta errada! O correto é: ${objetoAtual.categoria.replace("_", " ")}`;
+                erros++;
+                document.getElementById("errorCount").innerText = erros;
+            }
+            setTimeout(carregarNovoObjeto, 2000);
+        }
+
+        function resetarPontuacao() {
+            pontuacao = 0;
+            erros = 0;
+            document.getElementById("score").innerText = pontuacao;
+            document.getElementById("errorCount").innerText = erros;
+        }
+
+        window.onload = carregarNovoObjeto;
+    </script>
+</body>
+</html>
